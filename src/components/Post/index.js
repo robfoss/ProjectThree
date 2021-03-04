@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, Text, TouchableWithoutFeedback, Image } from 'react-native'
+import { View, Text, TouchableWithoutFeedback, Image, TouchableOpacity } from 'react-native'
 import styles from './styles'
 
 import Entypo from 'react-native-vector-icons/Entypo'
@@ -9,12 +9,24 @@ import Video from 'react-native-video'
 
 const Post = (props) => {
 
-    const { post } = props
+    const [post, setPost] = useState(props.post)
+    const [isLiked, setIsLiked] = useState(false)
 
     const [paused, setPaused] = useState(false)
 
     onPlayPausePress = () => {
         setPaused(!paused)
+    }
+
+
+    //Likes functionality
+    const onLikePress = () => {
+        const likesToAdd = isLiked ? -1 : 1
+        setPost({
+            ...post,
+            likes: post.likes + likesToAdd
+        })
+        setIsLiked(!isLiked)
     }
 
     return (
@@ -34,10 +46,13 @@ const Post = (props) => {
                             <View style={styles.profilePictureContainer}>
                                 <Image style={styles.profilePicture} source={{ uri: post.user.imageUri }} />
                             </View>
-                            <View style={styles.iconsContainer}>
-                                <Entypo name={"heart-outlined"} size={45} color={'white'} />
+                            <TouchableOpacity
+                                style={styles.iconsContainer}
+                                onPress={onLikePress}
+                            >
+                                <Entypo name={"heart-outlined"} size={45} color={isLiked ? 'red' : 'white'} />
                                 <Text style={styles.statsLabel}>{post.likes}</Text>
-                            </View>
+                            </TouchableOpacity>
                             <View style={styles.iconsContainer}>
                                 <Fontisto name={"commenting"} size={40} color={'white'} />
                                 <Text style={styles.statsLabel}>{post.comments}</Text>
